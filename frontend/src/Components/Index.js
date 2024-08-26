@@ -1,28 +1,110 @@
 import axios from "axios"
 import { createContext, useEffect, useState } from "react"
 import Button from '@mui/material/Button';
+import { TextField } from "@mui/material";
 
-const LogInContext = createContext();
+
+const LoggedInContext = createContext();
 
 export default function App() {
-    const [isLoggedIn, setIsLoggedIn] = useState(true)
-    useEffect(() => {
-        try {
-            axios('http://127.0.0.1:8080/items/66c5ffcae2136b147d5ede5e')
-            .then(data => console.log(data))
-        } catch {
-            console.log("Having error")
-        }
-    }, [])
+    const [isLoggedIn, setIsLoggedIn] = useState(false)
+    const [showingLogIn, setShowingLogIn] = useState(true)
+    // useEffect(() => {
+    //     try {
+    //         axios('http://127.0.0.1:8080/users/66ca38291928be1084eaf098')
+    //         .then(data => console.log(data))
+    //     } catch {
+    //         console.log("Having error")
+    //     }
+    // }, [])
     return (
         <div>
-            <LogInContext.Provider value = {[isLoggedIn, setIsLoggedIn]}>
+            <LoggedInContext.Provider value = {[isLoggedIn, setIsLoggedIn]}>
                 <h1>Welcome to e commerce app</h1>
                 {
                     isLoggedIn ? <Button> LoggedIn</Button> :
-                    <Button> Sign in</Button>
+                    <h3>You are not logged in</h3>
                 }
-            </LogInContext.Provider>
+            </LoggedInContext.Provider>
+            <Button onClick = {() => setShowingLogIn(true)}>Log in</Button>
+            <Button onClick={() => setShowingLogIn(false)}>Sign up</Button>
+            {showingLogIn ? <LogIn /> : <SignUp />}
+        </div>
+    )
+}
+
+function LogIn() {
+    let [userName, setUserName] = useState('')
+    let [password, setPassword] = useState('')
+
+    let inputs = [
+        {
+            label: 'Username',
+            value: userName,
+            onChange: (e) => setUserName(e.target.value)
+        }, 
+        {
+            label: 'Password',
+            value: password,
+            onChange: (e) => setPassword(e.target.value)
+        }
+    ]
+    return(
+        <div>
+            <h2>Log in</h2>
+            {
+                inputs.map(input => {
+                    return(
+                        <>
+                        <TextField label = {input.label} value = {input.value} onChange={input.onChange} size = "small" variant="standard"/>
+                        <div></div>
+                        </>
+                    )
+                })
+            }
+            <Button>Submit</Button>
+        </div>
+    )
+}
+
+function SignUp() {
+    let [userName, setUserName] = useState('')
+    let [password, setPassword] = useState('')
+    let [rePassword, setRePassword] = useState('')
+
+    let inputs = [
+        {
+            label: 'Username',
+            value: userName,
+            onChange: (e) => setUserName(e.target.value)
+        },
+        {
+            label: 'Password',
+            value: password,
+            onChange: (e) => setPassword(e.target.value)
+        },
+        {
+            label: 'Retype password',
+            value: rePassword,
+            onChange: (e) => setRePassword(e.target.value)
+        }
+    ]
+    return(
+        <div>
+            <h2>Sign up</h2>
+
+            {
+                inputs.map(input => {
+                    return(
+                        <>
+                            <TextField label = {input.label} value = {input.value} onChange = {input.onChange} size = {"small"} variant="standard"/>
+                            <div></div>
+                        </>
+                    )
+                })
+            }
+            <Button>Submit</Button>
+            
         </div>
     )
 }

@@ -6,19 +6,12 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 var client *mongo.Client
 var collection *mongo.Collection
-
-type User struct {
-	ID    primitive.ObjectID `json:"id,omitempty" bson:"_id,omitempty"`
-	Name  string             `json:"name"`
-	Value string             `json:"value"`
-}
 
 func init() {
 	var err error
@@ -42,6 +35,8 @@ func main() {
 	r.GET("/users/:id", getUser)
 	r.PUT("/users/:id", updateUser)
 	r.DELETE("/users/:id", deleteUser)
+
+	r.POST("/users/logIn", LogIn)
 
 	r.Run(":8080")
 }

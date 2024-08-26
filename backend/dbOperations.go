@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"example/hello/models"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -10,20 +11,43 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+func LogIn(c *gin.Context) {
+	var user models.User
+	if err := c.BindJSON(&user); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Invalid request payload",
+		})
+		return
+	}
+
+	var result models.User
+	print(user.Name)
+	print(user.Password)
+	err := collection.FindOne(context.TODO(), bson.M{"name": user.Name, "password": user.Password}).Decode(&result)
+
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid username or password"})
+		return
+	}
+
+	c.JSON(http.StatusOK, result)
+
+}
+
 func createUser(c *gin.Context) {
-	var item User
+	var user models.User
 	// why need & here
-	if err := c.BindJSON(&item); err != nil {
+	if err := c.BindJSON(&user); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	item.ID = primitive.NewObjectID()
-	_, err := collection.InsertOne(context.TODO(), item)
+	user.ID = primitive.NewObjectID()
+	_, err := collection.InsertOne(context.TODO(), user)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusCreated, item)
+	c.JSON(http.StatusCreated, user)
 }
 
 func getUser(c *gin.Context) {
@@ -33,8 +57,8 @@ func getUser(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
 		return
 	}
-	var item User
-	err = collection.FindOne(context.TODO(), bson.M{"_id": objID}).Decode(&item)
+	var user models.User
+	err = collection.FindOne(context.TODO(), bson.M{"_id": objID}).Decode(&user)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			c.JSON(http.StatusNotFound, gin.H{"error": "Item not found"})
@@ -43,7 +67,7 @@ func getUser(c *gin.Context) {
 		}
 		return
 	}
-	c.JSON(http.StatusOK, item)
+	c.JSON(http.StatusOK, user)
 }
 
 func updateUser(c *gin.Context) {
@@ -54,7 +78,7 @@ func updateUser(c *gin.Context) {
 		return
 	}
 
-	var item User
+	var item models.User
 	if err := c.BindJSON(&item); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
