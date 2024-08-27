@@ -1,8 +1,7 @@
 import axios from "axios"
-import { createContext, useEffect, useState } from "react"
+import { createContext, useContext, useEffect, useState } from "react"
 import Button from '@mui/material/Button';
 import { TextField } from "@mui/material";
-
 
 const LoggedInContext = createContext();
 
@@ -17,25 +16,49 @@ export default function App() {
     //         console.log("Having error")
     //     }
     // }, [])
+
     return (
         <div>
-            <LoggedInContext.Provider value = {[isLoggedIn, setIsLoggedIn]}>
+            <LoggedInContext.Provider value = {{isLoggedIn, setIsLoggedIn}}>
                 <h1>Welcome to e commerce app</h1>
                 {
-                    isLoggedIn ? <Button> LoggedIn</Button> :
-                    <h3>You are not logged in</h3>
+                    isLoggedIn ? 
+                    <>
+                        <h3>You are logged in</h3> 
+                        <Button onClick={() => setIsLoggedIn(false)}>Log out </Button>
+                    </>
+                    :
+                    <>
+                        <h3>You are not logged in</h3>
+                        <Button onClick = {() => setShowingLogIn(true)}>Log in</Button>
+                        <Button onClick={() => setShowingLogIn(false)}>Sign up</Button>
+                        {showingLogIn ? <LogIn /> : <SignUp />}
+                    </>
                 }
+            
+            
             </LoggedInContext.Provider>
-            <Button onClick = {() => setShowingLogIn(true)}>Log in</Button>
-            <Button onClick={() => setShowingLogIn(false)}>Sign up</Button>
-            {showingLogIn ? <LogIn /> : <SignUp />}
         </div>
     )
 }
 
 function LogIn() {
+    let {isLoggedIn, setIsLoggedIn} = useContext(LoggedInContext)
     let [userName, setUserName] = useState('')
     let [password, setPassword] = useState('')
+
+    let LogIn = async () => {
+        axios.post('http://127.0.0.1:8080/users/logIn', {
+            "name": userName,
+            "password": password
+        }).then(res => {return res.data})
+        .then(data => {
+            console.log(data)
+            setIsLoggedIn(true)
+            console.log("Right combination")
+        })
+        .catch(err => console.log(err))
+    }
 
     let inputs = [
         {
@@ -62,7 +85,7 @@ function LogIn() {
                     )
                 })
             }
-            <Button>Submit</Button>
+            <Button onClick={LogIn}>Submit</Button>
         </div>
     )
 }
