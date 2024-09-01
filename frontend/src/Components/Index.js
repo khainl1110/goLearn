@@ -1,7 +1,8 @@
 import axios from "axios"
 import { createContext, useContext, useEffect, useState } from "react"
 import Button from '@mui/material/Button';
-import { TextField } from "@mui/material";
+import { makeStyles, TextField } from "@mui/material";
+import MainApp from "./MainApp";
 
 const LoggedInContext = createContext();
 
@@ -24,7 +25,7 @@ export default function App() {
                 {
                     isLoggedIn ? 
                     <>
-                        <h3>You are logged in</h3> 
+                        <MainApp />
                         <Button onClick={() => setIsLoggedIn(false)}>Log out </Button>
                     </>
                     :
@@ -53,11 +54,9 @@ function LogIn() {
             "password": password
         }).then(res => {return res.data})
         .then(data => {
-            console.log(data)
             setIsLoggedIn(true)
-            console.log("Right combination")
         })
-        .catch(err => console.log(err))
+        .catch(err => alert("Wrong username and password"))
     }
 
     let inputs = [
@@ -95,6 +94,17 @@ function SignUp() {
     let [password, setPassword] = useState('')
     let [rePassword, setRePassword] = useState('')
 
+    let SignUp = () => {
+        axios.post('http://127.0.0.1:8080/users', {
+            "name": userName,
+            "password": password
+        }).then(res => {return res.data})
+        .then(data => {
+            alert("Create new user completed")
+        })
+        .catch(err => alert("Error creating new user"))
+    }
+
     let inputs = [
         {
             label: 'Username',
@@ -120,13 +130,13 @@ function SignUp() {
                 inputs.map(input => {
                     return(
                         <>
-                            <TextField label = {input.label} value = {input.value} onChange = {input.onChange} size = {"small"} variant="standard"/>
+                            <TextField key = {input.label} label = {input.label} value = {input.value} onChange = {input.onChange} size = {"small"} variant="standard"/>
                             <div></div>
                         </>
                     )
                 })
             }
-            <Button>Submit</Button>
+            <Button onClick={SignUp}>Submit</Button>
             
         </div>
     )
