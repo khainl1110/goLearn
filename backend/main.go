@@ -11,7 +11,8 @@ import (
 )
 
 var client *mongo.Client
-var collection *mongo.Collection
+var userCollection *mongo.Collection
+var postCollection *mongo.Collection
 
 func init() {
 	var err error
@@ -24,7 +25,9 @@ func init() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	collection = client.Database("testdb").Collection("users")
+
+	userCollection = client.Database("testdb").Collection("users")
+	postCollection = client.Database("testdb").Collection("posts")
 }
 
 func main() {
@@ -35,6 +38,11 @@ func main() {
 	r.GET("/users/:id", getUser)
 	r.PUT("/users/:id", updateUser)
 	r.DELETE("/users/:id", deleteUser)
+
+	r.POST("/posts", createPost)
+	r.GET("/posts/:id", getPost)
+	r.PUT("/posts/:id", updatePost)
+	r.DELETE("/posts/:id", deletePost)
 
 	r.POST("/users/logIn", LogIn)
 

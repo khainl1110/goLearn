@@ -1,14 +1,15 @@
 import axios from "axios"
-import { createContext, useContext, useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import Button from '@mui/material/Button';
-import { makeStyles, TextField } from "@mui/material";
+import {TextField } from "@mui/material";
 import MainApp from "./MainApp";
-
-const LoggedInContext = createContext();
+import LoggedInContext from "../Context/LoggedInContext";
+import CurrentUserContext from "../Context/CurrentUserContext";
 
 export default function App() {
     const [isLoggedIn, setIsLoggedIn] = useState(false)
     const [showingLogIn, setShowingLogIn] = useState(true)
+    const [userId, setUserId] = useState()
     // useEffect(() => {
     //     try {
     //         axios('http://127.0.0.1:8080/users/66ca38291928be1084eaf098')
@@ -21,7 +22,8 @@ export default function App() {
     return (
         <div>
             <LoggedInContext.Provider value = {{isLoggedIn, setIsLoggedIn}}>
-                <h1>Welcome to e commerce app</h1>
+            <CurrentUserContext.Provider value = {{userId, setUserId}}>
+                <h1>Welcome to social media app</h1>
                 {
                     isLoggedIn ? 
                     <>
@@ -37,7 +39,7 @@ export default function App() {
                     </>
                 }
             
-            
+            </CurrentUserContext.Provider>
             </LoggedInContext.Provider>
         </div>
     )
@@ -45,6 +47,7 @@ export default function App() {
 
 function LogIn() {
     let {isLoggedIn, setIsLoggedIn} = useContext(LoggedInContext)
+    let {userId, setUserId} = useContext(CurrentUserContext)
     let [userName, setUserName] = useState('')
     let [password, setPassword] = useState('')
 
@@ -55,6 +58,8 @@ function LogIn() {
         }).then(res => {return res.data})
         .then(data => {
             setIsLoggedIn(true)
+            setUserId(data.id)
+            
         })
         .catch(err => alert("Wrong username and password"))
     }

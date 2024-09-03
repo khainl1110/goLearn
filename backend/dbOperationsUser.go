@@ -23,7 +23,7 @@ func LogIn(c *gin.Context) {
 	var result models.User
 	print(user.Name)
 	print(user.Password)
-	err := collection.FindOne(context.TODO(), bson.M{"name": user.Name, "password": user.Password}).Decode(&result)
+	err := userCollection.FindOne(context.TODO(), bson.M{"name": user.Name, "password": user.Password}).Decode(&result)
 
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid username or password"})
@@ -42,7 +42,7 @@ func createUser(c *gin.Context) {
 		return
 	}
 	user.ID = primitive.NewObjectID()
-	_, err := collection.InsertOne(context.TODO(), user)
+	_, err := userCollection.InsertOne(context.TODO(), user)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -58,7 +58,7 @@ func getUser(c *gin.Context) {
 		return
 	}
 	var user models.User
-	err = collection.FindOne(context.TODO(), bson.M{"_id": objID}).Decode(&user)
+	err = userCollection.FindOne(context.TODO(), bson.M{"_id": objID}).Decode(&user)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			c.JSON(http.StatusNotFound, gin.H{"error": "Item not found"})
@@ -86,7 +86,7 @@ func updateUser(c *gin.Context) {
 
 	filter := bson.M{"_id": objID}
 	update := bson.M{"$set": item}
-	_, err = collection.UpdateOne(context.TODO(), filter, update)
+	_, err = userCollection.UpdateOne(context.TODO(), filter, update)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -103,7 +103,7 @@ func deleteUser(c *gin.Context) {
 		return
 	}
 
-	_, err = collection.DeleteOne(context.TODO(), bson.M{"_id": objID})
+	_, err = userCollection.DeleteOne(context.TODO(), bson.M{"_id": objID})
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
