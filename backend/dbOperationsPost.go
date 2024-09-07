@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"example/hello/models"
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -63,6 +64,7 @@ func updatePost(c *gin.Context) {
 
 	filter := bson.M{"_id": objID}
 	update := bson.M{"$set": post}
+
 	_, err = postCollection.UpdateOne(context.TODO(), filter, update)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -85,6 +87,56 @@ func deletePost(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-
 	c.JSON(http.StatusNoContent, nil)
+}
+
+func findPostsByUser(c *gin.Context) {
+	println("haha")
+	userId := c.Param("userId")
+	print(userId)
+
+	// userId1, err := primitive.ObjectIDFromHex(userId)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+
+	// filter := bson.M{"userId": userId1}
+	filterTest := bson.M{"content": "dfsd"}
+	// filter := bson.M{}
+	// println(userId)
+
+	cur, err := postCollection.Find(context.Background(), filterTest)
+
+	print(cur.RemainingBatchLength())
+	print(err)
+	println("haha2")
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var posts []models.Post
+	if err = cur.All(context.TODO(), &posts); err != nil {
+		panic(err)
+	}
+
+	c.JSON(http.StatusOK, posts)
+}
+
+func findAllPosts(c *gin.Context) {
+
+	filter := bson.D{}
+
+	cur, err := postCollection.Find(context.TODO(), filter)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var posts []models.Post
+	if err = cur.All(context.TODO(), &posts); err != nil {
+		panic(err)
+	}
+
+	c.JSON(http.StatusOK, posts)
+
 }
