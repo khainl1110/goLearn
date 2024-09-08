@@ -24,7 +24,7 @@ export default function FormPost() {
         .catch(err => alert("Wrong username and password"))
         */
         axios.post('http://127.0.0.1:8080/posts', {
-            "userId": userId,
+            "user": userId,
             "content": content
         }).then(data => {return data.data})
         .then(data => console.log(data))
@@ -36,7 +36,6 @@ export default function FormPost() {
                 <TextField value={content} onChange={handleChange}/>
                 <div>
                     <Button onClick={makeNewPost}>Submit</Button>
-                    <Button>Another test</Button>
                 </div>
             </Stack>
         </div>

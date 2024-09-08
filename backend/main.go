@@ -43,7 +43,7 @@ func main() {
 	r.GET("/posts/:id", getPost)
 	r.PUT("/posts/:id", updatePost)
 	r.DELETE("/posts/:id", deletePost)
-	r.GET("/posts/findPostsByUser/:userId", findPostsByUser)
+	r.GET("/posts/findPostsByUser/:user", findPostsByUser)
 	r.GET("/posts", findAllPosts)
 
 	r.POST("/users/logIn", LogIn)

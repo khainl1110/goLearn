@@ -58,6 +58,8 @@ function LogIn() {
         }).then(res => {return res.data})
         .then(data => {
             setIsLoggedIn(true)
+            console.log(data.id)
+            console.log(typeof(data.id))
             setUserId(data.id)
             
         })

@@ -91,21 +91,21 @@ func deletePost(c *gin.Context) {
 }
 
 func findPostsByUser(c *gin.Context) {
-	println("haha")
-	userId := c.Param("userId")
+
+	userId := c.Param("user")
+	print("testing")
 	print(userId)
 
-	// userId1, err := primitive.ObjectIDFromHex(userId)
 	// if err != nil {
 	// 	log.Fatal(err)
 	// }
 
-	// filter := bson.M{"userId": userId1}
-	filterTest := bson.M{"content": "dfsd"}
+	filter := bson.M{"user": "66cca1a7e82a04d764600c52"}
+	// filterTest := bson.M{"content": "dfsd"}
 	// filter := bson.M{}
 	// println(userId)
 
-	cur, err := postCollection.Find(context.Background(), filterTest)
+	cur, err := postCollection.Find(context.Background(), filter)
 
 	print(cur.RemainingBatchLength())
 	print(err)
