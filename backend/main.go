@@ -34,17 +34,18 @@ func main() {
 	r := gin.Default()
 	r.Use(cors.Default())
 
+	r.GET("/users", findAllUsers)
 	r.POST("/users", createUser)
 	r.GET("/users/:id", getUser)
 	r.PUT("/users/:id", updateUser)
 	r.DELETE("/users/:id", deleteUser)
 
+	r.GET("/posts", findAllPosts)
 	r.POST("/posts", createPost)
 	r.GET("/posts/:id", getPost)
 	r.PUT("/posts/:id", updatePost)
 	r.DELETE("/posts/:id", deletePost)
 	r.GET("/posts/findPostsByUser/:user", findPostsByUser)
-	r.GET("/posts", findAllPosts)
 
 	r.POST("/users/logIn", LogIn)
 

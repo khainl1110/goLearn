@@ -91,25 +91,10 @@ func deletePost(c *gin.Context) {
 }
 
 func findPostsByUser(c *gin.Context) {
-
 	userId := c.Param("user")
-	print("testing")
-	print(userId)
-
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-
-	filter := bson.M{"user": "66cca1a7e82a04d764600c52"}
-	// filterTest := bson.M{"content": "dfsd"}
-	// filter := bson.M{}
-	// println(userId)
+	filter := bson.M{"user": userId}
 
 	cur, err := postCollection.Find(context.Background(), filter)
-
-	print(cur.RemainingBatchLength())
-	print(err)
-	println("haha2")
 
 	if err != nil {
 		log.Fatal(err)
@@ -138,5 +123,4 @@ func findAllPosts(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, posts)
-
 }

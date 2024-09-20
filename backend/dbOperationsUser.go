@@ -111,3 +111,21 @@ func deleteUser(c *gin.Context) {
 
 	c.JSON(http.StatusNoContent, nil)
 }
+
+func findAllUsers(c *gin.Context) {
+
+	filter := bson.D{}
+
+	cur, err := userCollection.Find(context.TODO(), filter)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
+		return
+	}
+
+	var users []models.User
+	if err = cur.All(context.TODO(), &users); err != nil {
+		panic(err)
+	}
+
+	c.JSON(http.StatusOK, users)
+}
